@@ -1,0 +1,149 @@
+-- Carregar a Rayfield Library
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+-- Criar a janela com Key System
+local Window = Rayfield:CreateWindow({
+    Name = "H1ghd1vine💎",
+    LoadingTitle = "Starting...",
+    LoadingSubtitle = "by Leodok7bom",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "Sistembly",
+        FileName = "Haruno abusado"
+    },
+    KeySystem = true,
+    KeySettings = {
+        Title = "Gordo estrupado",
+        Subtitle = "Madruga abusadinho",
+        Note = "Acesso negado.",
+        FileName = "Keygrabber",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = "suavo99"
+    }
+})
+
+-- ======================
+-- ABAS ORGANIZADAS
+-- ======================
+local TabScripts = Window:CreateTab("Scripts", 4483362458)
+local TabFun = Window:CreateTab("Diversão", 4483362458)
+local TabUtil = Window:CreateTab("Utilidades", 4483362458)
+
+-- ======================
+-- SEÇÕES
+-- ======================
+local SectionCustom = TabScripts:CreateSection("Scripts Customizados")
+local SectionFun = TabFun:CreateSection("Diversão")
+local SectionUtil = TabUtil:CreateSection("Utilitários")
+
+-- ======================
+-- FUNÇÃO AUXILIAR PARA BOTÕES
+-- ======================
+local function AddScriptButton(tab, section, name, linkOrFunc, isConfig, iconId)
+    tab:CreateButton({
+        Name = name,
+        Callback = function()
+            if typeof(linkOrFunc) == "string" then
+                if isConfig then
+                    loadstring(game:HttpGet(linkOrFunc))({
+                        HideMenu = false,
+                        Previous = 0
+                    })
+                else
+                    loadstring(game:HttpGet(linkOrFunc))()
+                end
+            elseif typeof(linkOrFunc) == "function" then
+                linkOrFunc()
+            end
+        end,
+        Icon = iconId or 4483362458
+    })
+end
+
+-- ======================
+-- BOTÕES NA SEÇÃO SCRIPTS CUSTOMIZADOS
+-- ======================
+AddScriptButton(TabScripts, SectionCustom, "Bração", "https://pastebin.com/raw/DbVh8zgY", false, 4483362458)
+AddScriptButton(TabScripts, SectionCustom, "Time Stop", "https://raw.githubusercontent.com/rlkbgdajogada/Rlkbgdajogada/refs/heads/main/Time%20stop", false, 4483362458)
+AddScriptButton(TabScripts, SectionCustom, "Aimbot Haze PvP", "https://pastebin.com/raw/1qUUGhni", false, 4483362458)
+AddScriptButton(TabScripts, SectionCustom, "Headsize Haze PvP", "https://pastebin.com/raw/y0uW2rbb", false, 4483362458)
+AddScriptButton(TabScripts, SectionCustom, "Loopbring", "https://pastebin.com/raw/piEtjvvW", false, 4483362458)
+
+-- ======================
+-- BOTÕES NA SEÇÃO UTILIDADES
+-- ======================
+AddScriptButton(TabUtil, SectionUtil, "Invisível", "https://pastebin.com/raw/nhigiDcU", false, 4483362458)
+AddScriptButton(TabUtil, SectionUtil, "Shiftlock", "https://pastebin.com/raw/zHcrpc1Z", false, 4483362458)
+AddScriptButton(TabUtil, SectionUtil, "Munição Infinita", function()
+    local old
+    old = hookmetamethod(game, "__index", function(this, index)
+        if not checkcaller() and tostring(this) == "CurrentAmmo" and index == "Value" then
+            return 2
+        end
+        return old(this, index)
+    end)
+end, false, 4483362458)
+
+AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
+    local player = game.Players.LocalPlayer
+    local lighting = game:GetService("Lighting")
+    local runService = game:GetService("RunService")
+    local userSettings = UserSettings():GetService("UserGameSettings")
+    local workspace = game:GetService("Workspace")
+
+    local function extremeAntiLag()
+        lighting.GlobalShadows = false
+
+        for _, effect in pairs(lighting:GetChildren()) do
+            if effect:IsA("BloomEffect") or effect:IsA("BlurEffect") or effect:IsA("SunRaysEffect") 
+            or effect:IsA("ColorCorrectionEffect") or effect:IsA("DepthOfFieldEffect") then
+                effect.Enabled = false
+            end
+        end
+
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
+                obj.Enabled = false
+            elseif obj:IsA("BasePart") then
+                obj.CastShadow = false
+                if obj.Material ~= Enum.Material.Plastic then
+                    obj.Material = Enum.Material.Plastic
+                end
+            elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Fire") 
+            or obj:IsA("Smoke") or obj:IsA("Sparkles") then
+                obj.Enabled = false
+            elseif obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+                obj.Material = Enum.Material.Plastic
+            elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                obj.Transparency = 1
+            end
+        end
+
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CastShadow = false
+                    if part.Material ~= Enum.Material.Plastic then
+                        part.Material = Enum.Material.Plastic
+                    end
+                elseif part:IsA("ParticleEmitter") or part:IsA("Trail") then
+                    part.Enabled = false
+                end
+            end
+        end
+
+        userSettings:RequestGraphicsLevel(Enum.GraphicsQualityLevel.Three)
+        userSettings:SetScreenshotQuality(Enum.ScreenshotQualityLevel.Three)
+    end
+
+    extremeAntiLag()
+    runService.RenderStepped:Connect(extremeAntiLag)
+    print("AntiLag Extremo Corrigido ativado! GUI, animações e mira preservadas.")
+end, false, 4483362458)
+
+-- ======================
+-- BOTÕES NA SEÇÃO DIVERSÃO
+-- ======================
+AddScriptButton(TabFun, SectionFun, "Bloxtrap", "https://raw.githubusercontent.com/new-qwertyui/Bloxstrap/main/loader.lua", true, 4483362458)
+AddScriptButton(TabFun, SectionFun, "Autofarm Entregador", "https://raw.githubusercontent.com/Cr4ki3/Flexhub/refs/heads/main/Pizza", false, 4483362458)

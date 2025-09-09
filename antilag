@@ -24,17 +24,19 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ======================
--- ABAS ORGANIZADAS
+-- ABAS PRINCIPAIS
 -- ======================
-local TabScripts = Window:CreateTab("Scripts", 4483362458)
-local TabFun = Window:CreateTab("Diversão", 4483362458)
+local TabHeadsizes = Window:CreateTab("Headsizes", 4483362458)
+local TabAimbot = Window:CreateTab("Aimbot", 4483362458)
+local TabESP = Window:CreateTab("ESP", 4483362458)
 local TabUtil = Window:CreateTab("Utilidades", 4483362458)
 
 -- ======================
--- SEÇÕES
+-- SEÇÕES DENTRO DAS ABAS
 -- ======================
-local SectionCustom = TabScripts:CreateSection("Scripts Customizados")
-local SectionFun = TabFun:CreateSection("Diversão")
+local SectionHeadsizes = TabHeadsizes:CreateSection("Headsizes")
+local SectionAimbot = TabAimbot:CreateSection("Aimbots")
+local SectionESP = TabESP:CreateSection("Visualização")
 local SectionUtil = TabUtil:CreateSection("Utilitários")
 
 -- ======================
@@ -62,29 +64,25 @@ local function AddScriptButton(tab, section, name, linkOrFunc, isConfig, iconId)
 end
 
 -- ======================
--- BOTÕES NA SEÇÃO SCRIPTS CUSTOMIZADOS
+-- HEADSIZES
 -- ======================
-AddScriptButton(TabScripts, SectionCustom, "Bração", "https://pastebin.com/raw/DbVh8zgY", false, 4483362458)
-AddScriptButton(TabScripts, SectionCustom, "Time Stop", "https://raw.githubusercontent.com/rlkbgdajogada/Rlkbgdajogada/refs/heads/main/Time%20stop", false, 4483362458)
-AddScriptButton(TabScripts, SectionCustom, "Aimbot Haze PvP", "https://pastebin.com/raw/1qUUGhni", false, 4483362458)
-AddScriptButton(TabScripts, SectionCustom, "Headsize Haze PvP", "https://pastebin.com/raw/y0uW2rbb", false, 4483362458)
-AddScriptButton(TabScripts, SectionCustom, "Loopbring", "https://pastebin.com/raw/piEtjvvW", false, 4483362458)
+AddScriptButton(TabHeadsizes, SectionHeadsizes, "Headsize Haze", "https://pastebin.com/raw/y0uW2rbb", false)
+AddScriptButton(TabHeadsizes, SectionHeadsizes, "Headsize BIB 1.50", "https://raw.githubusercontent.com/rlkbgdajogada/headsize/refs/heads/main/1.50", false)
 
 -- ======================
--- BOTÕES NA SEÇÃO UTILIDADES
+-- AIMBOTS
 -- ======================
-AddScriptButton(TabUtil, SectionUtil, "Invisível", "https://pastebin.com/raw/nhigiDcU", false, 4483362458)
-AddScriptButton(TabUtil, SectionUtil, "Shiftlock", "https://pastebin.com/raw/zHcrpc1Z", false, 4483362458)
-AddScriptButton(TabUtil, SectionUtil, "Munição Infinita", function()
-    local old
-    old = hookmetamethod(game, "__index", function(this, index)
-        if not checkcaller() and tostring(this) == "CurrentAmmo" and index == "Value" then
-            return 2
-        end
-        return old(this, index)
-    end)
-end, false, 4483362458)
+AddScriptButton(TabAimbot, SectionAimbot, "Aimbot Haze", "https://pastebin.com/raw/1qUUGhni", false)
 
+-- ======================
+-- ESP
+-- ======================
+AddScriptButton(TabESP, SectionESP, "ESP", "https://pastebin.com/raw/ttqU8Mca", false)
+
+-- ======================
+-- UTILIDADES
+-- ======================
+AddScriptButton(TabUtil, SectionUtil, "Shiftlock", "https://pastebin.com/raw/zHcrpc1Z", false)
 AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
     local player = game.Players.LocalPlayer
     local lighting = game:GetService("Lighting")
@@ -140,10 +138,19 @@ AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
     extremeAntiLag()
     runService.RenderStepped:Connect(extremeAntiLag)
     print("AntiLag Extremo Corrigido ativado! GUI, animações e mira preservadas.")
-end, false, 4483362458)
+end, false)
 
--- ======================
--- BOTÕES NA SEÇÃO DIVERSÃO
--- ======================
-AddScriptButton(TabFun, SectionFun, "Bloxtrap", "https://raw.githubusercontent.com/new-qwertyui/Bloxstrap/main/loader.lua", true, 4483362458)
-AddScriptButton(TabFun, SectionFun, "Autofarm Entregador", "https://raw.githubusercontent.com/Cr4ki3/Flexhub/refs/heads/main/Pizza", false, 4483362458)
+AddScriptButton(TabUtil, SectionUtil, "Time Stop", "https://raw.githubusercontent.com/rlkbgdajogada/Rlkbgdajogada/refs/heads/main/Time%20stop", false)
+AddScriptButton(TabUtil, SectionUtil, "Loopbring", "https://pastebin.com/raw/piEtjvvW", false)
+AddScriptButton(TabUtil, SectionUtil, "Hub Bração", "https://pastebin.com/raw/DbVh8zgY", false)
+AddScriptButton(TabUtil, SectionUtil, "Autofarm Entregador", "https://raw.githubusercontent.com/Cr4ki3/Flexhub/refs/heads/main/Pizza", false)
+AddScriptButton(TabUtil, SectionUtil, "Invisível", "https://pastebin.com/raw/nhigiDcU", false)
+AddScriptButton(TabUtil, SectionUtil, "Munição Infinita", function()
+    local old
+    old = hookmetamethod(game, "__index", function(this, index)
+        if not checkcaller() and tostring(this) == "CurrentAmmo" and index == "Value" then
+            return 2
+        end
+        return old(this, index)
+    end)
+end, false)

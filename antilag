@@ -24,19 +24,19 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ======================
--- ABAS PRINCIPAIS
+-- ABAS ORGANIZADAS
 -- ======================
-local TabHeadsizes = Window:CreateTab("Headsizes", 4483362458)
 local TabAimbot = Window:CreateTab("Aimbot", 4483362458)
+local TabHeadsize = Window:CreateTab("Headsizes", 4483362458)
 local TabESP = Window:CreateTab("ESP", 4483362458)
 local TabUtil = Window:CreateTab("Utilidades", 4483362458)
 
 -- ======================
--- SEÇÕES DENTRO DAS ABAS
+-- SEÇÕES
 -- ======================
-local SectionHeadsizes = TabHeadsizes:CreateSection("Headsizes")
 local SectionAimbot = TabAimbot:CreateSection("Aimbots")
-local SectionESP = TabESP:CreateSection("Visualização")
+local SectionHead = TabHeadsize:CreateSection("Scripts de Headsize")
+local SectionESP = TabESP:CreateSection("ESP")
 local SectionUtil = TabUtil:CreateSection("Utilitários")
 
 -- ======================
@@ -64,15 +64,113 @@ local function AddScriptButton(tab, section, name, linkOrFunc, isConfig, iconId)
 end
 
 -- ======================
--- HEADSIZES
--- ======================
-AddScriptButton(TabHeadsizes, SectionHeadsizes, "Headsize Haze", "https://pastebin.com/raw/y0uW2rbb", false)
-AddScriptButton(TabHeadsizes, SectionHeadsizes, "Headsize BIB 1.50", "https://raw.githubusercontent.com/rlkbgdajogada/headsize/refs/heads/main/1.50", false)
-
--- ======================
 -- AIMBOTS
 -- ======================
 AddScriptButton(TabAimbot, SectionAimbot, "Aimbot Haze", "https://pastebin.com/raw/1qUUGhni", false)
+
+AddScriptButton(TabAimbot, SectionAimbot, "Aimbot FOV", function()
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local RunService = game:GetService("RunService")
+    local Workspace = game:GetService("Workspace")
+    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+    local aimPartName = "Cabesa"
+    local fovRadius = 60
+    local fovColor = Color3.fromRGB(255, 0, 0)
+    local fovThickness = 4
+    local fovSize = fovRadius * 2
+
+    if PlayerGui:FindFirstChild("FOVCircle") then
+        PlayerGui.FOVCircle:Destroy()
+    end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "FOVCircle"
+    screenGui.Parent = PlayerGui
+    screenGui.ResetOnSpawn = false
+
+    local fovCircle = Instance.new("Frame")
+    fovCircle.Name = "FOV"
+    fovCircle.Parent = screenGui
+    fovCircle.AnchorPoint = Vector2.new(0.5, 0.5)
+    fovCircle.Position = UDim2.new(0.5, 0, 0.5, 0)
+    fovCircle.Size = UDim2.new(0, fovSize, 0, fovSize)
+    fovCircle.BackgroundTransparency = 1
+    fovCircle.BorderSizePixel = 0
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1,0)
+    corner.Parent = fovCircle
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Parent = fovCircle
+    stroke.Thickness = fovThickness
+    stroke.Color = fovColor
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    RunService.RenderStepped:Connect(function()
+        if fovCircle and fovCircle.Parent then
+            fovCircle.Position = UDim2.new(0.5,0,0.5,0)
+        end
+    end)
+
+    local function canSeeTarget(targetPart)
+        local origin = Workspace.CurrentCamera.CFrame.Position
+        local direction = (targetPart.Position - origin)
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {LocalPlayer.Character}
+        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+        local raycastResult = Workspace:Raycast(origin, direction, raycastParams)
+        if raycastResult then
+            return raycastResult.Instance:IsDescendantOf(targetPart.Parent)
+        else
+            return true
+        end
+    end
+
+    local function getClosestTarget()
+        local closestPart, closestDistance = nil, math.huge
+        local camera = Workspace.CurrentCamera
+        local screenCenter = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
+
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(aimPartName) then
+                local humanoid = player.Character:FindFirstChild("Humanoid")
+                if humanoid and humanoid.Health > 0 then
+                    local part = player.Character[aimPartName]
+                    local pos, onScreen = camera:WorldToViewportPoint(part.Position)
+                    if onScreen then
+                        local dist = (Vector2.new(pos.X, pos.Y) - screenCenter).Magnitude
+                        if dist <= fovRadius and canSeeTarget(part) then
+                            if dist < closestDistance then
+                                closestDistance = dist
+                                closestPart = part
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        return closestPart
+    end
+
+    RunService.RenderStepped:Connect(function()
+        local targetPart = getClosestTarget()
+        if targetPart then
+            local camera = Workspace.CurrentCamera
+            camera.CFrame = CFrame.new(camera.CFrame.Position, targetPart.Position)
+        end
+    end)
+end, false)
+
+-- ======================
+-- HEADSIZES
+-- ======================
+AddScriptButton(TabHeadsize, SectionHead, "Headsize Haze PvP", "https://pastebin.com/raw/y0uW2rbb", false)
+AddScriptButton(TabHeadsize, SectionHead, "Headsize 1.50 BIB", "https://raw.githubusercontent.com/rlkbgdajogada/headsize/refs/heads/main/1.50", false)
 
 -- ======================
 -- ESP
@@ -92,14 +190,12 @@ AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
 
     local function extremeAntiLag()
         lighting.GlobalShadows = false
-
         for _, effect in pairs(lighting:GetChildren()) do
             if effect:IsA("BloomEffect") or effect:IsA("BlurEffect") or effect:IsA("SunRaysEffect") 
             or effect:IsA("ColorCorrectionEffect") or effect:IsA("DepthOfFieldEffect") then
                 effect.Enabled = false
             end
         end
-
         for _, obj in pairs(workspace:GetDescendants()) do
             if obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
                 obj.Enabled = false
@@ -117,7 +213,6 @@ AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
                 obj.Transparency = 1
             end
         end
-
         if player.Character and player.Character:FindFirstChild("Humanoid") then
             for _, part in pairs(player.Character:GetDescendants()) do
                 if part:IsA("BasePart") then
@@ -130,7 +225,6 @@ AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
                 end
             end
         end
-
         userSettings:RequestGraphicsLevel(Enum.GraphicsQualityLevel.Three)
         userSettings:SetScreenshotQuality(Enum.ScreenshotQualityLevel.Three)
     end
@@ -140,9 +234,9 @@ AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
     print("AntiLag Extremo Corrigido ativado! GUI, animações e mira preservadas.")
 end, false)
 
-AddScriptButton(TabUtil, SectionUtil, "Time Stop", "https://raw.githubusercontent.com/rlkbgdajogada/Rlkbgdajogada/refs/heads/main/Time%20stop", false)
 AddScriptButton(TabUtil, SectionUtil, "Loopbring", "https://pastebin.com/raw/piEtjvvW", false)
-AddScriptButton(TabUtil, SectionUtil, "Hub Bração", "https://pastebin.com/raw/DbVh8zgY", false)
+AddScriptButton(TabUtil, SectionUtil, "Time Stop", "https://raw.githubusercontent.com/rlkbgdajogada/Rlkbgdajogada/refs/heads/main/Time%20stop", false)
+AddScriptButton(TabUtil, SectionUtil, "Bração", "https://pastebin.com/raw/DbVh8zgY", false)
 AddScriptButton(TabUtil, SectionUtil, "Autofarm Entregador", "https://raw.githubusercontent.com/Cr4ki3/Flexhub/refs/heads/main/Pizza", false)
 AddScriptButton(TabUtil, SectionUtil, "Invisível", "https://pastebin.com/raw/nhigiDcU", false)
 AddScriptButton(TabUtil, SectionUtil, "Munição Infinita", function()

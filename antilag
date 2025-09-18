@@ -19,7 +19,7 @@ local Window = Rayfield:CreateWindow({
         FileName = "Keygrabber",
         SaveKey = true,
         GrabKeyFromSite = false,
-        Key = "suavo99"
+        Key = "nocry"
     }
 })
 

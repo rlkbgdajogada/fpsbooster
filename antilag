@@ -180,6 +180,11 @@ AddScriptButton(TabESP, SectionESP, "ESP", "https://pastebin.com/raw/ttqU8Mca", 
 -- ======================
 -- UTILIDADES
 -- ======================
+-- Botão solicitado: deve aparecer como o primeiro na aba Utilidades
+AddScriptButton(TabUtil, SectionUtil, "autofire (trigger bot)", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/fouejp/serial/refs/heads/main/new"))()
+end, false)
+
 AddScriptButton(TabUtil, SectionUtil, "Shiftlock", "https://pastebin.com/raw/zHcrpc1Z", false)
 AddScriptButton(TabUtil, SectionUtil, "Antilag Extremo", function()
     local player = game.Players.LocalPlayer

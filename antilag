@@ -1,1 +1,79 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
+_G.HeadSize = 3 -- tamanho padrão da cabeça
+
+function SetHeadSize(size)
+	_G.HeadSize = size
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= LocalPlayer then
+			ApplyHeadSize(player)
+		end
+	end
+end
+
+function ModifyHead(head)
+	pcall(function()
+		-- Remover mesh da cabeça
+		local mesh = head:FindFirstChildOfClass("SpecialMesh")
+		if mesh then mesh:Destroy() end
+
+		-- Tornar decal (rosto) invisível
+		for _, child in ipairs(head:GetChildren()) do
+			if child:IsA("Decal") then
+				child.Transparency = 1
+			end
+		end
+
+		-- Aumentar cabeça
+		head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+		head.Transparency = 1
+		head.CanCollide = false
+		head.Massless = true
+
+		-- Monitorar mudanças e manter as configurações sempre ativas
+		head:GetPropertyChangedSignal("Size"):Connect(function()
+			head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+		end)
+		head:GetPropertyChangedSignal("Massless"):Connect(function()
+			head.Massless = true
+		end)
+		head:GetPropertyChangedSignal("CanCollide"):Connect(function()
+			head.CanCollide = false
+		end)
+
+		-- Bloquear qualquer rosto futuro
+		head.ChildAdded:Connect(function(child)
+			if child:IsA("Decal") then
+				child.Transparency = 1
+			end
+		end)
+	end)
+end
+
+function ApplyHeadSize(player)
+	if player == LocalPlayer then return end
+
+	local function onCharacterAdded(character)
+		local head = character:WaitForChild("Head", 5)
+		if head then
+			ModifyHead(head)
+		end
+	end
+
+	if player.Character then
+		onCharacterAdded(player.Character)
+	end
+
+	player.CharacterAdded:Connect(onCharacterAdded)
+end
+
+-- Para players já no servidor
+for _, player in ipairs(Players:GetPlayers()) do
+	ApplyHeadSize(player)
+end
+
+-- Para players que entrarem no servidor depois
+Players.PlayerAdded:Connect(function(player)
+	ApplyHeadSize(player)
+end)
